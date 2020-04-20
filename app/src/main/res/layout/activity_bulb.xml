@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BulbActivity">
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:padding="20dp"
+        android:id="@+id/colors"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/colorPalette">
+        <Button
+            android:id="@+id/redColorButton"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/redbuttonback"/>
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/greenColorButton"
+            android:elevation="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/greenbuttonback"/>
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/blueColorButton"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/bluebuttonback"/>
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/yellowColorButton"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/yellowbuttonback"/>
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:id="@+id/bulbSwitch"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="10dp"
+            android:src="@drawable/red_button_24dp"
+            android:background="@drawable/ring_shape" />
+    </LinearLayout>
+
+
+
+    <ImageView
+        android:layout_gravity="center_horizontal"
+        android:elevation="40dp"
+        android:id="@+id/colorPalette"
+        android:layout_width="250dp"
+        android:focusableInTouchMode="true"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/colorpicker" />
+    
+                <ImageView
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/roundshape"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:id="@+id/viewColor"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/colorPalette"
+                    android:layout_marginTop="80dp" />
+
+<LinearLayout
+    android:layout_marginTop="80dp"
+    android:layout_gravity="center_horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+        <SeekBar
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/redSeekbar"
+            android:layout_width="380dp"
+            android:layout_height="wrap_content" />
+
+        <SeekBar
+            android:progressTint="@color/green"
+            android:thumbTint="@color/green"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/greenSeekbar"
+            android:layout_width="380dp"
+            android:layout_height="wrap_content" />
+
+        <SeekBar
+            android:progressTint="@color/blue"
+            android:thumbTint="@color/blue"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/blueSeekbar"
+            android:layout_width="380dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

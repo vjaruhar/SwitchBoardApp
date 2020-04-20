@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:title="Logout"
+      android:id="@+id/Logout_option"></item>
+  <item android:title="Remove Device"
+      android:id="@+id/remove_device"></item>
+</menu>

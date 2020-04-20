@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actions>
+  <action intentName="actions.intent.HOME_SCREEN">
+    <fulfillment urlTemplate="https://avrnapp/open{?deviceName}">
+      <parameter-mapping
+          intentParameter="device.name"
+          urlParameter="deviceName"
+          required="true"/>
+    </fulfillment>
+  </action>
+</actions>
