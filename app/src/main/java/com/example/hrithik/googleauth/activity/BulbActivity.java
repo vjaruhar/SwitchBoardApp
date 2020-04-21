@@ -1,4 +1,4 @@
-package com.example.hrithik.googleauth;
+package com.example.hrithik.googleauth.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -24,6 +24,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hrithik.googleauth.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;

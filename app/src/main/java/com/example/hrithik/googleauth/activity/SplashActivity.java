@@ -1,9 +1,11 @@
-package com.example.hrithik.googleauth;
+package com.example.hrithik.googleauth.activity;
 
 import android.content.Intent;
 import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.hrithik.googleauth.R;
 
 public class SplashActivity extends AppCompatActivity {
     private int SPLASH_SCREEN_LENGTH=3000;

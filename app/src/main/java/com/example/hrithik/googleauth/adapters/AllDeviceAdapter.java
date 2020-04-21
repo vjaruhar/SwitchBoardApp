@@ -1,4 +1,4 @@
-package com.example.hrithik.googleauth;
+package com.example.hrithik.googleauth.adapters;
 
 import android.content.Intent;
 import android.util.Log;
@@ -14,6 +14,10 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.hrithik.googleauth.activity.BulbActivity;
+import com.example.hrithik.googleauth.R;
+import com.example.hrithik.googleauth.activity.SwitchBoardActivity;
 
 public class AllDeviceAdapter extends RecyclerView.Adapter<AllDeviceAdapter.MyViewholder> {
 
@@ -65,7 +69,7 @@ public class AllDeviceAdapter extends RecyclerView.Adapter<AllDeviceAdapter.MyVi
                     mIntent.putExtra("DeviceType",deviceType[position]);
                 }
                 else {
-                    mIntent= new Intent(v.getContext(),BulbActivity.class);
+                    mIntent= new Intent(v.getContext(), BulbActivity.class);
                     mIntent.putExtra("DeviceId",deviceId[position]);
                     mIntent.putExtra("DeviceName",deviceName[position]);
                     mIntent.putExtra("DeviceType",deviceType[position]);

@@ -1,9 +1,11 @@
-package com.example.hrithik.googleauth;
+package com.example.hrithik.googleauth.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 
+import com.example.hrithik.googleauth.R;
+import com.example.hrithik.googleauth.adapters.AllDeviceAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.Nullable;

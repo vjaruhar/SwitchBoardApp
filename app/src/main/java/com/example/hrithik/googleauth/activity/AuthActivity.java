@@ -1,4 +1,4 @@
-package com.example.hrithik.googleauth;
+package com.example.hrithik.googleauth.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.hrithik.googleauth.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

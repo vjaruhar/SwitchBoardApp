@@ -1,4 +1,4 @@
-package com.example.hrithik.googleauth;
+package com.example.hrithik.googleauth.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +18,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.hrithik.googleauth.R;
+import com.example.hrithik.googleauth.adapters.AdditionalUserAdapter;
+import com.example.hrithik.googleauth.adapters.SwitchBoardAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

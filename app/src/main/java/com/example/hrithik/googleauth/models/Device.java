@@ -1,4 +1,4 @@
-package com.example.hrithik.googleauth;
+package com.example.hrithik.googleauth.models;
 
 public class Device {
     private String belongsTo;
