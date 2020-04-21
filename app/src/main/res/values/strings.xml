@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GoogleAuth</string>
+    <string name="app_name">Smart Switch Board</string>
     <string name="title_activity_add_device">addDevice</string>
     <string name="switch_1">Switch 1</string>
     <string-array name="DeviceType">

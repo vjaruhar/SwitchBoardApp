@@ -1,6 +1,5 @@
 package com.example.hrithik.googleauth;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -18,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -30,12 +28,9 @@ import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
-public class grid_switchBoard extends AppCompatActivity {
+public class SwitchBoardActivity extends AppCompatActivity {
     final List<String> nameList=new ArrayList<>();
     final List<String> uidList=new ArrayList<>();
     private FirebaseAuth mAuth;
@@ -54,7 +49,7 @@ public class grid_switchBoard extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         //grid layout for switch boards
-        final GridLayoutManager gridLayoutManager=new GridLayoutManager(grid_switchBoard.this,2);
+        final GridLayoutManager gridLayoutManager=new GridLayoutManager(SwitchBoardActivity.this,2);
         final RecyclerView recyclerView=findViewById(R.id.recyclerView1);
         //setting that grid layout on the recycler view
         recyclerView.setLayoutManager(gridLayoutManager);
@@ -79,7 +74,7 @@ public class grid_switchBoard extends AppCompatActivity {
                     status.add(dataSnapshot1.getValue().toString());
                     switchName.add(dataSnapshot1.getKey());
                 }
-                recyclerView.setAdapter(new switchBoard_adapter(status.size(),status,switchName,deviceId));
+                recyclerView.setAdapter(new SwitchBoardAdapter(status.size(),status,switchName,deviceId));
                 recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewPosition);
             }
 
@@ -124,7 +119,7 @@ public class grid_switchBoard extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.deviceInfo)
         {
-            AlertDialog.Builder mBuilder=new AlertDialog.Builder(grid_switchBoard.this);
+            AlertDialog.Builder mBuilder=new AlertDialog.Builder(SwitchBoardActivity.this);
             View mView=getLayoutInflater().inflate(R.layout.alertdialog_for_deviceinfo,null);
             TextView deviceNameTv=mView.findViewById(R.id.deviceName);
             TextView deviceIdTv=mView.findViewById(R.id.deviceId);
@@ -147,7 +142,7 @@ public class grid_switchBoard extends AppCompatActivity {
             {
                 e.getStackTrace();
             }
-            //show Info about other users only to the owner of that device:
+            //show Info about other users only to the owner of that Device:
            if(belongsTo.equals(mAuth.getUid())) {
                final RecyclerView list = mView.findViewById(R.id.recyclerViewForUser);
                list.setLayoutManager(new LinearLayoutManager(mView.getContext()));
@@ -171,7 +166,7 @@ public class grid_switchBoard extends AppCompatActivity {
                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                            nameList.add(dataSnapshot.child(uid).child("UserInfo").child("Name").getValue().toString());
                                            Log.i("result_nameList: ", dataSnapshot.child(uid).child("UserInfo").child("Name").getValue().toString());
-                                           list.setAdapter(new adapterForUser(nameList, uidList,deviceId));
+                                           list.setAdapter(new AdditionalUserAdapter(nameList, uidList,deviceId));
                                    }
 
                                    @Override

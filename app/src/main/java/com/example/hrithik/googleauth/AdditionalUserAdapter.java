@@ -1,14 +1,11 @@
 package com.example.hrithik.googleauth;
 
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,20 +16,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class adapterForUser extends RecyclerView.Adapter<adapterForUser.MyViewholder> {
+public class AdditionalUserAdapter extends RecyclerView.Adapter<AdditionalUserAdapter.MyViewHolder> {
 
 
     private  String[] name;
     private  String[] uid;
     private String deviceId;
 
-    public  adapterForUser(List<String> name,List<String> uid,String deviceId){
+    public AdditionalUserAdapter(List<String> name, List<String> uid, String deviceId){
         this.name= name.toArray(new String[0]);
         this.uid= uid.toArray(new String[0]);
         this.deviceId=deviceId;
@@ -41,15 +36,15 @@ public class adapterForUser extends RecyclerView.Adapter<adapterForUser.MyViewho
 
     @NonNull
     @Override
-    public MyViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater =LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.userslist,parent,false);
 
-        return new MyViewholder(view);
+        return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewholder holder, final int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
 
         String str1= name[position];
         holder.name.setText(str1);
@@ -109,11 +104,11 @@ public class adapterForUser extends RecyclerView.Adapter<adapterForUser.MyViewho
     }
 
 
-    public class MyViewholder extends RecyclerView.ViewHolder  {
+     static public class MyViewHolder extends RecyclerView.ViewHolder  {
         TextView name;
         Button button;
 
-        public MyViewholder(View itemView ) {
+        public MyViewHolder(View itemView ) {
             super(itemView);
 
             name= itemView.findViewById(R.id.textViewName);

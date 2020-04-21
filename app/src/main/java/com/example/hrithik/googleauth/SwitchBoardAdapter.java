@@ -12,14 +12,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class switchBoard_adapter extends RecyclerView.Adapter<switchBoard_adapter.MyViewHolder> {
+public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.MyViewHolder> {
     private int numOfSwitches;
     private String deviceId;
     private String[] switchStatus;
@@ -27,7 +25,7 @@ public class switchBoard_adapter extends RecyclerView.Adapter<switchBoard_adapte
 
 
 
-    public switchBoard_adapter(int numOfSwitches, List<String> switchstatus, List<String> switchname, String DeviceId) {
+    public SwitchBoardAdapter(int numOfSwitches, List<String> switchstatus, List<String> switchname, String DeviceId) {
         this.numOfSwitches = numOfSwitches;
         this.deviceId = DeviceId;
         this.switchName = switchname.toArray(new String[0]);

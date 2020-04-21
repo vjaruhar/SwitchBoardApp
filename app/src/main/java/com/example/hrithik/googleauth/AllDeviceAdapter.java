@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewholder> {
+public class AllDeviceAdapter extends RecyclerView.Adapter<AllDeviceAdapter.MyViewholder> {
 
 
     private  String[] deviceName;
@@ -23,7 +23,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewholder> {
     private String[] deviceId;
 
 
-    public  MyAdapter(List<String> deviceName, List<String> deviceType,List<String> deviceId){
+    public AllDeviceAdapter(List<String> deviceName, List<String> deviceType, List<String> deviceId){
         this.deviceName= deviceName.toArray(new String[0]);
         this.deviceType= deviceType.toArray(new String[0]);
         this.deviceId=deviceId.toArray(new String[0]);
@@ -59,7 +59,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewholder> {
                 Intent mIntent;
                 Toast.makeText(v.getContext(),deviceId[position],Toast.LENGTH_SHORT).show();
                 if (deviceType[position].equals("Switch Board")) {
-                     mIntent= new Intent(v.getContext(),grid_switchBoard.class);
+                     mIntent= new Intent(v.getContext(), SwitchBoardActivity.class);
                     mIntent.putExtra("DeviceId",deviceId[position]);
                     mIntent.putExtra("DeviceName",deviceName[position]);
                     mIntent.putExtra("DeviceType",deviceType[position]);

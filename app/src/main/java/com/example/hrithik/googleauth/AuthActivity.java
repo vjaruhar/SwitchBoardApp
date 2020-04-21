@@ -3,7 +3,6 @@ package com.example.hrithik.googleauth;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +15,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -24,19 +22,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class pageSignIn extends AppCompatActivity {
+public class AuthActivity extends AppCompatActivity {
     SignInButton googleBtn;
     FirebaseAuth mAuth;
-    private String TAG="pageSignIn";
+    private String TAG="AuthActivity";
     private int RC_SIGN_IN=1;
     private GoogleSignInClient mGoogleSignInClient;
     ProgressDialog progressDialog;
@@ -56,7 +51,7 @@ public class pageSignIn extends AppCompatActivity {
 
 
         if (mAuth.getCurrentUser() != null) {
-          Intent  myIntent = new Intent(getApplicationContext(), profileActivity.class);
+          Intent  myIntent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(myIntent);
             finish();
         }
@@ -129,7 +124,7 @@ public class pageSignIn extends AppCompatActivity {
                             myref.updateChildren(myMap);
                             if (progressDialog.isShowing())
                                 progressDialog.dismiss();
-                            Intent myIntent= new Intent(pageSignIn.this,profileActivity.class);
+                            Intent myIntent= new Intent(AuthActivity.this, HomeActivity.class);
                             startActivity(myIntent);
                             Toast.makeText(getApplicationContext(),"Signed In Successfully!",Toast.LENGTH_SHORT).show();
                             finish();

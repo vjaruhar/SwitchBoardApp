@@ -1,14 +1,10 @@
 package com.example.hrithik.googleauth;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -25,18 +21,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +37,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,15 +50,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.LongSummaryStatistics;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
-public class profileActivity extends AppCompatActivity  {
+public class HomeActivity extends AppCompatActivity  {
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private DatabaseReference myRef;
@@ -94,7 +78,7 @@ public class profileActivity extends AppCompatActivity  {
         final DatabaseReference myRef1= FirebaseDatabase.getInstance().getReference().child("All_Devices");
         final DatabaseReference myRef_forUser_devices=FirebaseDatabase.getInstance().getReference().child("Users")
                 .child(mAuth.getUid()).child("Devices");
-        Log.i("result","In profileActivity");
+        Log.i("result","In HomeActivity");
 
         //ValueEventListener to add devices in list to reflect it on recyclerView
 
@@ -122,7 +106,7 @@ public class profileActivity extends AppCompatActivity  {
                                 }
                             }
                             //passing the device_info(list) to adapter to show devices on the recyclerView
-                            list.setAdapter(new MyAdapter(deviceName,deviceType,deviceId));
+                            list.setAdapter(new AllDeviceAdapter(deviceName,deviceType,deviceId));
                         }
 
                         @Override
@@ -146,7 +130,7 @@ public class profileActivity extends AppCompatActivity  {
             @Override
             public void onClick(View view) {
                 //alert dialog is set when FAB  is pressed
-                final AlertDialog.Builder mBuilder=new AlertDialog.Builder(profileActivity.this);
+                final AlertDialog.Builder mBuilder=new AlertDialog.Builder(HomeActivity.this);
                 View mView=getLayoutInflater().inflate(R.layout.alertdialog,null);
                 final EditText deviceId=mView.findViewById(R.id.deviceId);
                 final EditText deviceName=mView.findViewById(R.id.deviceName);
@@ -195,7 +179,7 @@ public class profileActivity extends AppCompatActivity  {
                                     if(i>=dataSnapshot.getChildrenCount())
                                            addDevice(DeviceName,DeviceId);
                                     else
-                                        Toast.makeText(profileActivity.this,"This Device has already been added to your account!",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(HomeActivity.this,"This Device has already been added to your account!",Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -221,7 +205,7 @@ public class profileActivity extends AppCompatActivity  {
                 ClickableSpan clickableSpan =new ClickableSpan() {
                     @Override
                     public void onClick(@NonNull View widget) {
-                        IntentIntegrator intentIntegrator=new IntentIntegrator(profileActivity.this);
+                        IntentIntegrator intentIntegrator=new IntentIntegrator(HomeActivity.this);
                         intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
                         intentIntegrator.setPrompt("SCAN");
                         intentIntegrator.setOrientationLocked(false);
@@ -246,8 +230,8 @@ public class profileActivity extends AppCompatActivity  {
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(profileActivity.this, "User Logged Out", Toast.LENGTH_SHORT).show();
-                        Intent myIntent = new Intent(getApplicationContext(), pageSignIn.class);
+                        Toast.makeText(HomeActivity.this, "User Logged Out", Toast.LENGTH_SHORT).show();
+                        Intent myIntent = new Intent(getApplicationContext(), AuthActivity.class);
                         startActivity(myIntent);
                         finish();
                     }
@@ -262,7 +246,7 @@ public class profileActivity extends AppCompatActivity  {
         {
             if(result.getContents()==null)
             {
-                Toast.makeText(profileActivity.this,"Not Scanned Properly!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this,"Not Scanned Properly!",Toast.LENGTH_SHORT).show();
             }
             else
             {
@@ -302,12 +286,12 @@ public class profileActivity extends AppCompatActivity  {
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
                                             myref3.child(DeviceId).push().updateChildren(nm);
-                                            Toast.makeText(profileActivity.this,"Device Added!",Toast.LENGTH_LONG).show();
+                                            Toast.makeText(HomeActivity.this,"Device Added!",Toast.LENGTH_LONG).show();
                                         }}
                                 });
                             }
                             else
-                                Toast.makeText(profileActivity.this,"This Device has already been added to your account!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HomeActivity.this,"This Device has already been added to your account!",Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -318,7 +302,7 @@ public class profileActivity extends AppCompatActivity  {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(profileActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomeActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -353,16 +337,16 @@ public class profileActivity extends AppCompatActivity  {
         }
         else
             if (id==R.id.remove_device)
-            { //remove device item in option menu is pressed
+            { //remove Device item in option menu is pressed
                 FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
                 final DatabaseReference myRef1= FirebaseDatabase.getInstance().getReference().child("All_Devices");
                 final DatabaseReference myRef2= FirebaseDatabase.getInstance().getReference().child("Users")
                         .child(mAuth.getUid()).child("Devices");
 
                 int buttons = deviceName.size();
-                Toast.makeText(profileActivity.this, "remove:"+buttons, Toast.LENGTH_SHORT).show();
-                //alertDialog to select the device :
-                AlertDialog.Builder mBuilder=new AlertDialog.Builder(profileActivity.this);
+                Toast.makeText(HomeActivity.this, "remove:"+buttons, Toast.LENGTH_SHORT).show();
+                //alertDialog to select the Device :
+                AlertDialog.Builder mBuilder=new AlertDialog.Builder(HomeActivity.this);
                 View mView=getLayoutInflater().inflate(R.layout.remove_device_alertdialog,null);
 
                 Button cancelBtn=mView.findViewById(R.id.cancelBtn);
@@ -394,10 +378,10 @@ public class profileActivity extends AppCompatActivity  {
                     @Override
                     public void onClick(View v) {
                         if(rgp.getCheckedRadioButtonId()==-1)
-                            Toast.makeText(profileActivity.this,"Please select a device!",
+                            Toast.makeText(HomeActivity.this,"Please select a Device!",
                                     Toast.LENGTH_SHORT).show();
                        else{
-                            final ProgressDialog progressDialog=new ProgressDialog(profileActivity.this);
+                            final ProgressDialog progressDialog=new ProgressDialog(HomeActivity.this);
                             progressDialog.setMessage("Removing Device...");
                             progressDialog.setCanceledOnTouchOutside(false);
                             progressDialog.show();
@@ -416,13 +400,13 @@ public class profileActivity extends AppCompatActivity  {
                                                                deviceId.remove(id);
                                                                deviceName.remove(id);
                                                                deviceType.remove(id);
-                                                               Toast.makeText(profileActivity.this,"Device Removed!",
+                                                               Toast.makeText(HomeActivity.this,"Device Removed!",
                                                                        Toast.LENGTH_SHORT).show();
                                                                alertDialog.dismiss();
                                                                progressDialog.dismiss();
                                                                RecyclerView list = findViewById(R.id.recyclerView);
-                                                               list.setLayoutManager(new LinearLayoutManager(profileActivity.this));
-                                                               list.setAdapter(new MyAdapter(deviceName,deviceType,deviceId));
+                                                               list.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
+                                                               list.setAdapter(new AllDeviceAdapter(deviceName,deviceType,deviceId));
                                                            }
                                                        }
                                                    });
@@ -446,11 +430,11 @@ public class profileActivity extends AppCompatActivity  {
 
     public void addDevice(final String deviceName, final String deviceId)
     {
-        final ProgressDialog progressDialog=new ProgressDialog(profileActivity.this);
+        final ProgressDialog progressDialog=new ProgressDialog(HomeActivity.this);
         progressDialog.setMessage("Adding Device...");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
-        Log.i("result","In add device method");
+        Log.i("result","In add Device method");
         mAuth.getInstance().getCurrentUser();
             final String[] uiqueId = new String[1];
             final DatabaseReference myRef2=FirebaseDatabase.getInstance().getReference("All_Devices")
@@ -488,7 +472,7 @@ public class profileActivity extends AppCompatActivity  {
                                               if(task.isSuccessful()){
                                                   myRef2.child("BelongsTo").setValue(mAuth.getUid());
                                                   progressDialog.dismiss();
-                                                  Toast.makeText(profileActivity.this,"Device Added!",Toast.LENGTH_LONG).show();
+                                                  Toast.makeText(HomeActivity.this,"Device Added!",Toast.LENGTH_LONG).show();
                                               }}
                                       });
                                   }
@@ -496,7 +480,7 @@ public class profileActivity extends AppCompatActivity  {
                           }); }
                       else {
                           progressDialog.dismiss();
-                          Toast.makeText(profileActivity.this,"Scan QR Code to add existing DeviceId.",Toast.LENGTH_SHORT)
+                          Toast.makeText(HomeActivity.this,"Scan QR Code to add existing DeviceId.",Toast.LENGTH_SHORT)
                                   .show();
                       }
                       break;
@@ -507,7 +491,7 @@ public class profileActivity extends AppCompatActivity  {
 
                 if(i>=dataSnapshot.getChildrenCount()){
                     progressDialog.dismiss();
-                    Toast.makeText(profileActivity.this,"DeviceID not found!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(HomeActivity.this,"DeviceID not found!",Toast.LENGTH_LONG).show();
                 }
             }
 

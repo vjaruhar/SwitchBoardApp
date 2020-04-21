@@ -1,14 +1,14 @@
 package com.example.hrithik.googleauth;
 
-public class device {
-public String belongsTo;
-public String deviceName;
+public class Device {
+    private String belongsTo;
+    private String deviceName;
 
-    public device(String deviceName, String belongsTo) {
+    public Device(String deviceName, String belongsTo) {
         this.belongsTo = belongsTo;
         this.deviceName = deviceName;
     }
-    public device(){
+    public Device(){
 
     }
 
