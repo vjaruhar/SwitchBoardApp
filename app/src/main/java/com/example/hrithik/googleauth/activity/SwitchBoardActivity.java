@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.example.hrithik.googleauth.R;
 import com.example.hrithik.googleauth.adapters.AdditionalUserAdapter;
 import com.example.hrithik.googleauth.adapters.SwitchBoardAdapter;
+import com.example.hrithik.googleauth.utilities.PreferenceUtility;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +30,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +47,11 @@ public class SwitchBoardActivity extends AppCompatActivity {
     String deviceName;
     String deviceType;
     //list of status of the switches in that deviceID
-     List<String> status =new ArrayList<>();
+    List<String> status =new ArrayList<>();
     List<String> switchName =new ArrayList<>();
+    JSONObject switchNameObject;
+    PreferenceUtility preferenceUtility;
+    boolean isCustomSwitchNamesAvailable = false;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +74,11 @@ public class SwitchBoardActivity extends AppCompatActivity {
                 .child(deviceId.trim())
                 .child("Switches");
 
+        preferenceUtility = new PreferenceUtility(SwitchBoardActivity.this);
+
+        switchNameObject = preferenceUtility.getSwitchBoardSwitchNames(deviceId);
+
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -77,7 +89,7 @@ public class SwitchBoardActivity extends AppCompatActivity {
                     status.add(dataSnapshot1.getValue().toString());
                     switchName.add(dataSnapshot1.getKey());
                 }
-                recyclerView.setAdapter(new SwitchBoardAdapter(status.size(),status,switchName,deviceId));
+                recyclerView.setAdapter(new SwitchBoardAdapter(status.size(),status,switchName,deviceId, switchNameObject, SwitchBoardActivity.this));
                 recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewPosition);
             }
 
@@ -120,8 +132,7 @@ public class SwitchBoardActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.deviceInfo)
-        {
+        if (id == R.id.deviceInfo) {
             AlertDialog.Builder mBuilder=new AlertDialog.Builder(SwitchBoardActivity.this);
             View mView=getLayoutInflater().inflate(R.layout.alertdialog_for_deviceinfo,null);
             TextView deviceNameTv=mView.findViewById(R.id.deviceName);
@@ -197,6 +208,7 @@ public class SwitchBoardActivity extends AppCompatActivity {
             alertDialog.setCanceledOnTouchOutside(false);
             alertDialog.show();
         }
+
         return super.onOptionsItemSelected(item);
     }
 
