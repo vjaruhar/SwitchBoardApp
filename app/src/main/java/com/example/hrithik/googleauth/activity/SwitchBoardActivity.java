@@ -2,6 +2,7 @@ package com.example.hrithik.googleauth.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.sdsmdg.harjot.crollerTest.Croller;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +53,11 @@ public class SwitchBoardActivity extends AppCompatActivity {
     List<String> switchName =new ArrayList<>();
     JSONObject switchNameObject;
     PreferenceUtility preferenceUtility;
+    private CardView speedC, dimmerC;
+    private Croller speedCroller, dimmerCroller;
     boolean isCustomSwitchNamesAvailable = false;
+    boolean isSpeedControlAvailable = false;
+    boolean isDimmerAvailable = false;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +67,12 @@ public class SwitchBoardActivity extends AppCompatActivity {
         //grid layout for switch boards
         final GridLayoutManager gridLayoutManager=new GridLayoutManager(SwitchBoardActivity.this,2);
         final RecyclerView recyclerView=findViewById(R.id.recyclerView1);
+
+        speedC = findViewById(R.id.SpeedCrollerCardView);
+        dimmerC = findViewById(R.id.dimmerCardView);
+        speedCroller = findViewById(R.id.SpeedCroller);
+        dimmerCroller = findViewById(R.id.DimmerCroller);
+
         //setting that grid layout on the recycler view
         recyclerView.setLayoutManager(gridLayoutManager);
 
@@ -73,6 +85,61 @@ public class SwitchBoardActivity extends AppCompatActivity {
         databaseReference= FirebaseDatabase.getInstance().getReference("All_Devices")
                 .child(deviceId.trim())
                 .child("Switches");
+        final DatabaseReference deviceRef = FirebaseDatabase.getInstance().getReference("All_Devices")
+                .child(deviceId.trim());
+
+        deviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("Contains")){
+                    for(DataSnapshot devicesTypes : dataSnapshot.child("Contains").getChildren()){
+                       if(devicesTypes.getValue().equals("Speed Control")){
+                           isSpeedControlAvailable = true;
+                           speedC.setVisibility(View.VISIBLE);
+
+                           int val = (int) dataSnapshot.child("speedControlValue").getValue(Integer.class);
+                           speedCroller.setProgress(val);
+                       }
+                        if(devicesTypes.getValue().equals("Dimmer")){
+                            isDimmerAvailable = true;
+                            dimmerC.setVisibility(View.VISIBLE);
+
+                            int val = (int) dataSnapshot.child("dimmerValue").getValue(Integer.class);
+                            dimmerCroller.setProgress(val);
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        deviceRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("Contains")){
+                    for(DataSnapshot devicesTypes : dataSnapshot.child("Contains").getChildren()){
+                        if(devicesTypes.getValue().equals("Speed Control")){
+
+                            int val = (int) dataSnapshot.child("speedControlValue").getValue(Integer.class);
+                            speedCroller.setProgress(val);
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
 
         preferenceUtility = new PreferenceUtility(SwitchBoardActivity.this);
 
@@ -112,6 +179,27 @@ public class SwitchBoardActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+        speedCroller.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
+            @Override
+            public void onProgressChanged(int progress) {
+                DatabaseReference speedRef = FirebaseDatabase.getInstance().getReference("All_Devices")
+                        .child(deviceId.trim()).child("speedControlValue");
+                speedRef.setValue(progress);
+            }
+        });
+
+        dimmerCroller.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
+            @Override
+            public void onProgressChanged(int progress) {
+                DatabaseReference speedRef = FirebaseDatabase.getInstance().getReference("All_Devices")
+                        .child(deviceId.trim()).child("dimmerValue");
+                speedRef.setValue(progress);
+            }
+        });
+
 
 
 
