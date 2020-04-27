@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hrithik.googleauth.R;
+import com.example.hrithik.googleauth.models.SwitchStatusModel;
 import com.example.hrithik.googleauth.utilities.PreferenceUtility;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,7 +20,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.sdsmdg.harjot.crollerTest.Croller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,25 +33,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.MyViewHolder> {
-    private int numOfSwitches;
-    private String deviceId;
-    private String[] switchStatus;
-    private String[] switchName;
-    JSONObject switchNameObject;
-    boolean isCustomSwitchNamesAvailable = false;
+    private ArrayList<SwitchStatusModel> statusList;
+    private JSONObject switchNameObject;
+    private boolean isCustomSwitchNamesAvailable = false;
     private Context context;
-    PreferenceUtility preferenceUtility;
+    private PreferenceUtility preferenceUtility;
+    private String deviceId;
 
 
 
-    public SwitchBoardAdapter(int numOfSwitches, List<String> switchstatus, List<String> switchname, String DeviceId, JSONObject switchNameObject, Context context) {
-        this.numOfSwitches = numOfSwitches;
-        this.deviceId = DeviceId;
-        this.switchName = switchname.toArray(new String[0]);
-        this.switchStatus = switchstatus.toArray(new String[0]);
+    public SwitchBoardAdapter(ArrayList<SwitchStatusModel> statusList, String deviceId, Context context) {
+        this.statusList = statusList;
         this.context = context;
+        this.deviceId = deviceId;
         this.preferenceUtility = new PreferenceUtility(context);
-
     }
 
     @NonNull
@@ -62,9 +60,10 @@ public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
+        final SwitchStatusModel model = statusList.get(position);
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("All_Devices")
                 .child(deviceId.trim())
-                .child("Switches").child(switchName[position]);
+                .child("Switches").child(model.getSwitchName());
 
         switchNameObject = preferenceUtility.getSwitchBoardSwitchNames(deviceId);
         if(this.switchNameObject != null){
@@ -72,9 +71,9 @@ public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.
         }
 
         if(isCustomSwitchNamesAvailable){
-            if(switchNameObject.has(switchName[position])){
+            if(switchNameObject.has(model.getSwitchName())){
                 try {
-                    holder.textView.setText(switchNameObject.getString(switchName[position]));
+                    holder.textView.setText(switchNameObject.getString(model.getSwitchName()));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -86,20 +85,46 @@ public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.
         }
 
 
-
-        if (switchStatus[position].equals("1")) {
-            holder.imageView.setBackgroundResource(R.drawable.ring_shape_green);
-            holder.imageView.setImageResource(R.drawable.green_button_24dp);
-        } else {
-            holder.imageView.setBackgroundResource(R.drawable.ring_shape);
-            holder.imageView.setImageResource(R.drawable.red_button_24dp);
+        if(model.isIs_switch()) {
+            holder.imageView.setVisibility(View.VISIBLE);
+            holder.croller.setVisibility(View.GONE);
+            if (model.getSwitchStatus().equals("1")) {
+                holder.imageView.setBackgroundResource(R.drawable.ring_shape_green);
+                holder.imageView.setImageResource(R.drawable.green_button_24dp);
+            } else {
+                holder.imageView.setBackgroundResource(R.drawable.ring_shape);
+                holder.imageView.setImageResource(R.drawable.red_button_24dp);
+            }
+        }else if(model.isIs_speed()){
+            holder.imageView.setVisibility(View.GONE);
+            holder.croller.setVisibility(View.VISIBLE);
+            holder.croller.setProgress((int)model.getSpeedValue());
+        }else if(model.isIs_dimmer()){
+            holder.imageView.setVisibility(View.GONE);
+            holder.croller.setVisibility(View.VISIBLE);
+            holder.croller.setProgress((int)model.getDimmerValue());
         }
+
+        holder.croller.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
+            @Override
+            public void onProgressChanged(int progress) {
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("All_Devices")
+                        .child(deviceId.trim())
+                        .child("switch_func")
+                        .child(model.getSwitchName());
+                if(model.isIs_speed()){
+                    ref.child("speedControlValue").setValue(progress);
+                }else if(model.isIs_dimmer()){
+                    ref.child("dimmerValue").setValue(progress);
+                }
+            }
+        });
 
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (switchStatus[position].equals("1")) {
+                if (model.getSwitchStatus().equals("1")) {
 
                     databaseReference.setValue("0")
                             .addOnCompleteListener(new OnCompleteListener() {
@@ -159,7 +184,7 @@ public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.
                             isError = false;
                         }
                         if(!isError){
-                            preferenceUtility.saveSwitchName(deviceId, name.trim(), switchName[position]);
+                            preferenceUtility.saveSwitchName(deviceId, name.trim(), model.getSwitchName());
                             Toast.makeText(context, name.trim(), Toast.LENGTH_SHORT).show();
                             switchNameObject = preferenceUtility.getSwitchBoardSwitchNames(deviceId);
                             notifyDataSetChanged();
@@ -178,17 +203,19 @@ public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.
 
     @Override
     public int getItemCount() {
-        return numOfSwitches;
+        return statusList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView textView;
+        Croller croller;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.switchIv);
             textView = itemView.findViewById(R.id.switchTv);
+            croller = itemView.findViewById(R.id.croller);
         }
     }
 }
