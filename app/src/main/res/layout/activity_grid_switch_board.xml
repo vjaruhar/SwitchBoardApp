@@ -13,16 +13,26 @@
         android:layout_centerHorizontal="true"
         android:layout_columnSpan="2"
         android:layout_centerInParent="true">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_alignParentTop="true"
             android:id="@+id/recyclerView1"
+            android:layout_below="@+id/toolbar"
             android:scrollbars="vertical"
             android:scrollbarStyle="insideOverlay"
             android:scrollbarSize="5dp"
             android:padding="2dp"
             android:scrollbarFadeDuration="200"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"/>
 
         <LinearLayout
             android:id="@+id/seekBarLayout"

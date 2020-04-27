@@ -2,13 +2,16 @@ package com.example.hrithik.googleauth.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -58,6 +61,7 @@ public class SwitchBoardActivity extends AppCompatActivity {
     boolean isCustomSwitchNamesAvailable = false;
     boolean isSpeedControlAvailable = false;
     boolean isDimmerAvailable = false;
+    private Toolbar toolbar;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +77,7 @@ public class SwitchBoardActivity extends AppCompatActivity {
         speedCroller = findViewById(R.id.SpeedCroller);
         dimmerCroller = findViewById(R.id.DimmerCroller);
 
+
         //setting that grid layout on the recycler view
         recyclerView.setLayoutManager(gridLayoutManager);
 
@@ -81,6 +86,13 @@ public class SwitchBoardActivity extends AppCompatActivity {
         deviceId =mIntent.getStringExtra("DeviceId");
         deviceName=mIntent.getStringExtra("DeviceName");
         deviceType=mIntent.getStringExtra("DeviceType");
+
+
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(deviceName);
+        setSupportActionBar(toolbar);
+
+
 
         databaseReference= FirebaseDatabase.getInstance().getReference("All_Devices")
                 .child(deviceId.trim())

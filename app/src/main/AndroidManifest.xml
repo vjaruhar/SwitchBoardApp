@@ -16,8 +16,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:replace="android:appComponentFactory">
         <activity android:name=".activity.SwitchBoardActivity"
-            android:label="SwitchBoard"
-            android:theme="@style/AppTheme"/>
+            android:label="SwitchBoard" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
