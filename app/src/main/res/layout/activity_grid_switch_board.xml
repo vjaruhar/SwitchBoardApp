@@ -65,7 +65,7 @@
                     app:label_color="#000000"
                     app:label="Speed Control"
                     app:main_circle_color="#FFFFFF"
-                    app:max="1000"
+                    app:max="100"
                     app:progress_primary_color="@color/darkGreen"
                     app:progress_secondary_color="#EEEEEE"
                     app:start_offset="45" />
@@ -91,7 +91,7 @@
                     app:label_color="#000000"
                     app:label="Dimmer"
                     app:main_circle_color="#FFFFFF"
-                    app:max="1000"
+                    app:max="100"
                     app:progress_primary_color="@color/darkGreen"
                     app:progress_secondary_color="#EEEEEE"
                     app:start_offset="45" />

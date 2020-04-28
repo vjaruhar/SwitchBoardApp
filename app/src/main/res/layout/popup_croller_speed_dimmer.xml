@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:layout_margin="15dp">
+    <com.sdsmdg.harjot.crollerTest.Croller
+        android:id="@+id/crollerPopUp"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        app:back_circle_color="@color/colorPrimary"
+        app:indicator_color="#0B3C49"
+        app:indicator_width="10"
+        app:is_continuous="true"
+        app:main_circle_color="#FFFFFF"
+        app:max="100"
+        app:progress_primary_color="@color/darkGreen"
+        app:progress_secondary_color="#EEEEEE"
+        app:start_offset="45"
+        />
+
+    <!--<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="5dp"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/cancel_button_popup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:background="@color/colorAccent"
+            android:textColor="@color/white"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"/>
+        <Button
+            android:id="@+id/ok_button_popup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ok"
+            android:background="@color/colorAccent"
+            android:textColor="@color/white"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"/>
+
+
+    </LinearLayout>-->
+</LinearLayout>

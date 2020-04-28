@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.hrithik.googleauth.R;
 import com.example.hrithik.googleauth.models.SwitchStatusModel;
 import com.example.hrithik.googleauth.utilities.PreferenceUtility;
+import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -87,7 +88,7 @@ public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.
 
         if(model.isIs_switch()) {
             holder.imageView.setVisibility(View.VISIBLE);
-            holder.croller.setVisibility(View.GONE);
+            holder.bar.setVisibility(View.GONE);
             if (model.getSwitchStatus().equals("1")) {
                 holder.imageView.setBackgroundResource(R.drawable.ring_shape_green);
                 holder.imageView.setImageResource(R.drawable.green_button_24dp);
@@ -97,29 +98,66 @@ public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.
             }
         }else if(model.isIs_speed()){
             holder.imageView.setVisibility(View.GONE);
-            holder.croller.setVisibility(View.VISIBLE);
-            holder.croller.setProgress((int)model.getSpeedValue());
+            holder.bar.setVisibility(View.VISIBLE);
+            holder.bar.setProgress((int)model.getSpeedValue());
         }else if(model.isIs_dimmer()){
             holder.imageView.setVisibility(View.GONE);
-            holder.croller.setVisibility(View.VISIBLE);
-            holder.croller.setProgress((int)model.getDimmerValue());
+            holder.bar.setVisibility(View.VISIBLE);
+            holder.bar.setProgress((int)model.getDimmerValue());
         }
 
-        holder.croller.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
+//        holder.croller.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
+//            @Override
+//            public void onProgressChanged(int progress) {
+//                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("All_Devices")
+//                        .child(deviceId.trim())
+//                        .child("switch_func")
+//                        .child(model.getSwitchName());
+//                if(model.isIs_speed()){
+//                    ref.child("speedControlValue").setValue(progress);
+//                }else if(model.isIs_dimmer()){
+//                    ref.child("dimmerValue").setValue(progress);
+//                }
+//            }
+//        });
+
+        holder.bar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onProgressChanged(int progress) {
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("All_Devices")
-                        .child(deviceId.trim())
-                        .child("switch_func")
-                        .child(model.getSwitchName());
+            public void onClick(View v) {
+                AlertDialog.Builder crollerBuilder = new AlertDialog.Builder(context);
+                View popUpView = LayoutInflater.from(context).inflate(R.layout.popup_croller_speed_dimmer, null);
+                Croller popUpCroller = popUpView.findViewById(R.id.crollerPopUp);
+//                Button cancelButtonPopUp = popUpView.findViewById(R.id.cancel_button_popup);
+//                Button okButtonPopUp = popUpView.findViewById(R.id.ok_button_popup);
+
                 if(model.isIs_speed()){
-                    ref.child("speedControlValue").setValue(progress);
+                    popUpCroller.setProgress((int)model.getSpeedValue());
                 }else if(model.isIs_dimmer()){
-                    ref.child("dimmerValue").setValue(progress);
+                    popUpCroller.setProgress((int)model.getDimmerValue());
                 }
+
+                crollerBuilder.setView(popUpView);
+
+                final AlertDialog popUpDialog = crollerBuilder.create();
+                popUpDialog.setCanceledOnTouchOutside(true);
+                popUpDialog.show();
+
+                popUpCroller.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
+                    @Override
+                    public void onProgressChanged(int progress) {
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("All_Devices")
+                                .child(deviceId.trim())
+                                .child("switch_func")
+                                .child(model.getSwitchName());
+                        if(model.isIs_speed()){
+                            ref.child("speedControlValue").setValue(progress);
+                        }else if(model.isIs_dimmer()){
+                            ref.child("dimmerValue").setValue(progress);
+                        }
+                    }
+                });
             }
         });
-
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,13 +247,13 @@ public class SwitchBoardAdapter extends RecyclerView.Adapter<SwitchBoardAdapter.
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView textView;
-        Croller croller;
+        ArcProgress bar;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.switchIv);
             textView = itemView.findViewById(R.id.switchTv);
-            croller = itemView.findViewById(R.id.croller);
+            bar = itemView.findViewById(R.id.displayBar);
         }
     }
 }

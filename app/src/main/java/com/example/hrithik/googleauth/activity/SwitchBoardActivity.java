@@ -54,8 +54,6 @@ import java.util.Objects;
 public class SwitchBoardActivity extends AppCompatActivity {
     final List<String> nameList=new ArrayList<>();
     final List<String> uidList=new ArrayList<>();
-    ArrayList<AllProductsModel> productsModelArrayList;
-    ArrayList<SwitchFuncModel> switchFuncModelArrayList;
     ArrayList<SwitchStatusModel> switchStatusModelArrayList;
     private FirebaseAuth mAuth;
     String belongsTo;
@@ -77,6 +75,7 @@ public class SwitchBoardActivity extends AppCompatActivity {
     private Toolbar toolbar;
     DatabaseReference devicePointer, allProductsPointer;
     private ProgressDialog progressDialog;
+    ArrayList<AllProductsModel> allProductsModelArrayList = new ArrayList<>();
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +118,31 @@ public class SwitchBoardActivity extends AppCompatActivity {
         devicePointer = FirebaseDatabase.getInstance().getReference("All_Devices")
                 .child(deviceId.trim());
 
+        AllProductsModel productsModel = new AllProductsModel();
+        productsModel.setDeviceName("None");
+        productsModel.setHas(null);
+        allProductsModelArrayList.add(productsModel);
+        readData(allProductsPointer, new OnGetDataListener() {
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                for(DataSnapshot device: dataSnapshot.getChildren()){
+                    AllProductsModel productsModel = new AllProductsModel();
+                    System.out.println("In loop product"+ (String) device.child("DeviceName").getValue());
+                    productsModel.setDeviceName((String) device.child("DeviceName").getValue());
+                    productsModel.setHas((String) device.child("has").getValue());
+                    allProductsModelArrayList.add(productsModel);
+                }
+            }
+
+            @Override
+            public void onStart() {
+            }
+
+            @Override
+            public void onFailure() {
+            }
+        });
+
         deviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -159,6 +183,11 @@ public class SwitchBoardActivity extends AppCompatActivity {
                             int val = (int) dataSnapshot.child("speedControlValue").getValue(Integer.class);
                             speedCroller.setProgress(val);
                         }
+                        if(devicesTypes.getValue().equals("Dimmer")){
+
+                            int val = (int) dataSnapshot.child("dimmerValue").getValue(Integer.class);
+                            dimmerCroller.setProgress(val);
+                        }
                     }
 
                 }
@@ -181,13 +210,6 @@ public class SwitchBoardActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Parcelable recyclerViewPosition=recyclerView.getLayoutManager().onSaveInstanceState();
-//                status.clear();
-//                switchName.clear();
-//                switchType.clear();
-//                for(DataSnapshot dataSnapshot1:dataSnapshot.getChildren()){
-//                    status.add(dataSnapshot1.getValue().toString());
-//                    switchName.add(dataSnapshot1.getKey());
-//                }
                 switchStatusModelArrayList.clear();
                 for(DataSnapshot switches: dataSnapshot.child("Switches").getChildren()){
                     SwitchStatusModel model = new SwitchStatusModel();
@@ -214,7 +236,17 @@ public class SwitchBoardActivity extends AppCompatActivity {
                                     model.setIs_speed(false);
                                     model.setSwitchStatus(Objects.requireNonNull(switches.getValue()).toString());
                                 }
+                            }else{
+                                model.setIs_switch(true);
+                                model.setIs_dimmer(false);
+                                model.setIs_speed(false);
+                                model.setSwitchStatus(Objects.requireNonNull(switches.getValue()).toString());
                             }
+                        }else{
+                            model.setIs_switch(true);
+                            model.setIs_dimmer(false);
+                            model.setIs_speed(false);
+                            model.setSwitchStatus(Objects.requireNonNull(switches.getValue()).toString());
                         }
                     }else{
                         model.setIs_switch(true);
@@ -377,37 +409,9 @@ public class SwitchBoardActivity extends AppCompatActivity {
     private void addDeviceToSwitchDialog(){
 
         progressDialog = new ProgressDialog(SwitchBoardActivity.this);
+        final ArrayList<SwitchFuncModel> switchFuncModelArrayList;
 
-        productsModelArrayList = new ArrayList<>();
         switchFuncModelArrayList = new ArrayList<>();
-        AllProductsModel productsModel = new AllProductsModel();
-        productsModel.setDeviceName("None");
-        productsModel.setHas(null);
-        productsModelArrayList.add(productsModel);
-        readData(allProductsPointer, new OnGetDataListener() {
-            @Override
-            public void onSuccess(DataSnapshot dataSnapshot) {
-                for(DataSnapshot device: dataSnapshot.getChildren()){
-                    AllProductsModel productsModel = new AllProductsModel();
-                    productsModel.setDeviceName((String) device.child("DeviceName").getValue());
-                    productsModel.setHas((String) device.child("DeviceName").getValue());
-                    productsModelArrayList.add(productsModel);
-                }
-                progressDialog.cancel();
-            }
-
-            @Override
-            public void onStart() {
-                progressDialog.setCanceledOnTouchOutside(false);
-                progressDialog.setMessage("Loading...");
-                progressDialog.show();
-            }
-
-            @Override
-            public void onFailure() {
-                progressDialog.cancel();
-            }
-        });
 
         readData(devicePointer, new OnGetDataListener() {
             @Override
@@ -416,15 +420,19 @@ public class SwitchBoardActivity extends AppCompatActivity {
                     SwitchFuncModel model = new SwitchFuncModel();
                     model.setSwitchName(switches.getKey());
                     if(dataSnapshot.hasChild("is_external_device_added")){
-                        if(Objects.equals(dataSnapshot.child("is_external_device_added").getValue(), "1")){
+                        if(dataSnapshot.child("is_external_device_added").getValue().toString().equals("1")){
                             if(dataSnapshot.hasChild("switch_func")){
-                                if(dataSnapshot.child("switch_func").hasChild(Objects.requireNonNull(switches.getKey()))){
+                                if(dataSnapshot.child("switch_func").hasChild(switches.getKey())){
                                     model.setHas_device(true);
-                                    model.setExtDeviceName((String) dataSnapshot.child("switch_fun").child(switches.getKey()).child("deviceType").getValue());
-                                    model.setHas((String) dataSnapshot.child("switch_fun").child(switches.getKey()).child("has").getValue());
+                                    model.setExtDeviceName((String) dataSnapshot.child("switch_func").child(switches.getKey()).child("deviceType").getValue());
+                                    model.setHas((String) dataSnapshot.child("switch_func").child(switches.getKey()).child("has").getValue());
+                                }else{
+                                    model.setHas_device(false);
                                 }
                             }
                         }
+                    }else{
+                        model.setHas_device(false);
                     }
                     switchFuncModelArrayList.add(model);
                 }
@@ -449,9 +457,9 @@ public class SwitchBoardActivity extends AppCompatActivity {
         RecyclerView alertRv = v.findViewById(R.id.switchDeviceRecyclerDialog);
 
         alertRv.setLayoutManager(new LinearLayoutManager(v.getContext()));
-        alertRv.setHasFixedSize(true);
-        AddDeviceToSwitchAdapter adapter = new AddDeviceToSwitchAdapter(productsModelArrayList, switchFuncModelArrayList, SwitchBoardActivity.this);
+        AddDeviceToSwitchAdapter adapter = new AddDeviceToSwitchAdapter(allProductsModelArrayList, switchFuncModelArrayList, SwitchBoardActivity.this, deviceId);
         alertRv.setAdapter(adapter);
+
         builder.setView(v);
 
         AlertDialog dialog = builder.create();
