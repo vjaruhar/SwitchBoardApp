@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:custom="http://schemas.android.com/tools"
+    android:layout_gravity="center_horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="10dp"
+    android:padding="30dp"
+    android:layout_centerHorizontal="true"
+    android:layout_centerInParent="true"
+    android:elevation="20dp"
+    android:layout_margin="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:padding="30dp"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <com.github.lzyzsd.circleprogress.ArcProgress
+            android:visibility="visible"
+            android:id="@+id/speedAndDimmerBar"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            app:arc_unfinished_color="@color/colorPrimary"
+            app:arc_finished_color="@color/darkGreen"
+            app:arc_text_color="@color/black"
+            app:arc_stroke_width="12dp"
+            />
+        <TextView
+            android:id="@+id/nameTV"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:hint="Switch 40"
+            android:textSize="20dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

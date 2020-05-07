@@ -17,6 +17,7 @@
         app:is_continuous="true"
         app:main_circle_color="#FFFFFF"
         app:max="100"
+        app:min="0"
         app:progress_primary_color="@color/darkGreen"
         app:progress_secondary_color="#EEEEEE"
         app:start_offset="45"

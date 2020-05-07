@@ -1,18 +1,8 @@
 package com.example.hrithik.googleauth.activity;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -21,19 +11,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hrithik.googleauth.R;
 import com.example.hrithik.googleauth.adapters.AddDeviceToSwitchAdapter;
 import com.example.hrithik.googleauth.adapters.AdditionalUserAdapter;
+import com.example.hrithik.googleauth.adapters.SpeedAndDimmerAdapter;
 import com.example.hrithik.googleauth.adapters.SwitchBoardAdapter;
 import com.example.hrithik.googleauth.interfaces.OnGetDataListener;
 import com.example.hrithik.googleauth.models.AllProductsModel;
+import com.example.hrithik.googleauth.models.SpeedAndDimmerModel;
 import com.example.hrithik.googleauth.models.SwitchFuncModel;
 import com.example.hrithik.googleauth.models.SwitchStatusModel;
 import com.example.hrithik.googleauth.utilities.PreferenceUtility;
-import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,9 +40,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-import com.sdsmdg.harjot.crollerTest.Croller;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -55,27 +51,20 @@ public class SwitchBoardActivity extends AppCompatActivity {
     final List<String> nameList=new ArrayList<>();
     final List<String> uidList=new ArrayList<>();
     ArrayList<SwitchStatusModel> switchStatusModelArrayList;
+    ArrayList<SpeedAndDimmerModel> speedAndDimmerModelArrayList;
     private FirebaseAuth mAuth;
     String belongsTo;
     DatabaseReference databaseReference;
     String deviceId;
     String deviceName;
     String deviceType;
-    //list of status of the switches in that deviceID
-    List<String> status =new ArrayList<>();
-    List<String> switchName =new ArrayList<>();
-    List<String> switchType = new ArrayList<>();
     JSONObject switchNameObject;
     PreferenceUtility preferenceUtility;
-    private CardView speedC, dimmerC;
-    private Croller speedCroller, dimmerCroller;
-    boolean isCustomSwitchNamesAvailable = false;
-    boolean isSpeedControlAvailable = false;
-    boolean isDimmerAvailable = false;
     private Toolbar toolbar;
     DatabaseReference devicePointer, allProductsPointer;
     private ProgressDialog progressDialog;
     ArrayList<AllProductsModel> allProductsModelArrayList = new ArrayList<>();
+    private RecyclerView speedAndDimmerRecycler;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,15 +74,13 @@ public class SwitchBoardActivity extends AppCompatActivity {
         //grid layout for switch boards
         final GridLayoutManager gridLayoutManager=new GridLayoutManager(SwitchBoardActivity.this,2);
         final RecyclerView recyclerView=findViewById(R.id.recyclerView1);
-
-        speedC = findViewById(R.id.SpeedCrollerCardView);
-        dimmerC = findViewById(R.id.dimmerCardView);
-        speedCroller = findViewById(R.id.SpeedCroller);
-        dimmerCroller = findViewById(R.id.DimmerCroller);
+        speedAndDimmerRecycler = findViewById(R.id.speedAndDimmerRecycler);
 
 
         //setting that grid layout on the recycler view
         recyclerView.setLayoutManager(gridLayoutManager);
+        GridLayoutManager speedGridLayoutManager =new GridLayoutManager(SwitchBoardActivity.this,2);
+        speedAndDimmerRecycler.setLayoutManager(speedGridLayoutManager);
 
         // accepting the deviceId,deviceName, deviceType that are passed
         Intent mIntent=getIntent();
@@ -106,7 +93,7 @@ public class SwitchBoardActivity extends AppCompatActivity {
         toolbar.setTitle(deviceName);
         setSupportActionBar(toolbar);
 
-
+        preferenceUtility = new PreferenceUtility(SwitchBoardActivity.this);
 
         databaseReference= FirebaseDatabase.getInstance().getReference("All_Devices")
                 .child(deviceId.trim());
@@ -127,7 +114,6 @@ public class SwitchBoardActivity extends AppCompatActivity {
             public void onSuccess(DataSnapshot dataSnapshot) {
                 for(DataSnapshot device: dataSnapshot.getChildren()){
                     AllProductsModel productsModel = new AllProductsModel();
-                    System.out.println("In loop product"+ (String) device.child("DeviceName").getValue());
                     productsModel.setDeviceName((String) device.child("DeviceName").getValue());
                     productsModel.setHas((String) device.child("has").getValue());
                     allProductsModelArrayList.add(productsModel);
@@ -142,53 +128,32 @@ public class SwitchBoardActivity extends AppCompatActivity {
             public void onFailure() {
             }
         });
-
-        deviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("Contains")){
-                    for(DataSnapshot devicesTypes : dataSnapshot.child("Contains").getChildren()){
-                       if(devicesTypes.getValue().equals("Speed Control")){
-                           isSpeedControlAvailable = true;
-                           speedC.setVisibility(View.VISIBLE);
-
-                           int val = (int) dataSnapshot.child("speedControlValue").getValue(Integer.class);
-                           speedCroller.setProgress(val);
-                       }
-                        if(devicesTypes.getValue().equals("Dimmer")){
-                            isDimmerAvailable = true;
-                            dimmerC.setVisibility(View.VISIBLE);
-
-                            int val = (int) dataSnapshot.child("dimmerValue").getValue(Integer.class);
-                            dimmerCroller.setProgress(val);
-                        }
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
+        speedAndDimmerModelArrayList = new ArrayList<>();
         deviceRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild("Contains")){
-                    for(DataSnapshot devicesTypes : dataSnapshot.child("Contains").getChildren()){
-                        if(devicesTypes.getValue().equals("Speed Control")){
-
-                            int val = (int) dataSnapshot.child("speedControlValue").getValue(Integer.class);
-                            speedCroller.setProgress(val);
+                    Parcelable recyclerViewPosition=speedAndDimmerRecycler.getLayoutManager().onSaveInstanceState();
+                    speedAndDimmerModelArrayList.clear();
+                    for(DataSnapshot devices : dataSnapshot.child("Contains").getChildren()){
+                        SpeedAndDimmerModel model = new SpeedAndDimmerModel();
+                        if(devices.child("DeviceType").getValue().toString().equals("Speed Control")){
+                            model.setIs_dimmer(false);
+                            model.setIs_speed(true);
+                            model.setDeviceType("Speed Control");
+                            model.setDevice_no(devices.getKey());
+                            model.setSpeedControlValue((int)devices.child("speedControlValue").getValue(Integer.class));
+                        }else if(devices.child("DeviceType").getValue().toString().equals("Dimmer")){
+                            model.setIs_dimmer(true);
+                            model.setIs_speed(false);
+                            model.setDeviceType("Dimmer");
+                            model.setDevice_no(devices.getKey());
+                            model.setDimmerValue((int)devices.child("dimmerValue").getValue(Integer.class));
                         }
-                        if(devicesTypes.getValue().equals("Dimmer")){
-
-                            int val = (int) dataSnapshot.child("dimmerValue").getValue(Integer.class);
-                            dimmerCroller.setProgress(val);
-                        }
+                        speedAndDimmerModelArrayList.add(model);
                     }
+                    speedAndDimmerRecycler.setAdapter(new SpeedAndDimmerAdapter(speedAndDimmerModelArrayList, SwitchBoardActivity.this, preferenceUtility, deviceId));
+                    speedAndDimmerRecycler.getLayoutManager().onRestoreInstanceState(recyclerViewPosition);
 
                 }
             }
@@ -198,10 +163,6 @@ public class SwitchBoardActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-        preferenceUtility = new PreferenceUtility(SwitchBoardActivity.this);
 
         switchNameObject = preferenceUtility.getSwitchBoardSwitchNames(deviceId);
 
@@ -279,34 +240,6 @@ public class SwitchBoardActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-        speedCroller.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
-            @Override
-            public void onProgressChanged(int progress) {
-                DatabaseReference speedRef = FirebaseDatabase.getInstance().getReference("All_Devices")
-                        .child(deviceId.trim()).child("speedControlValue");
-                speedRef.setValue(progress);
-            }
-        });
-
-        dimmerCroller.setOnProgressChangedListener(new Croller.onProgressChangedListener() {
-            @Override
-            public void onProgressChanged(int progress) {
-                DatabaseReference speedRef = FirebaseDatabase.getInstance().getReference("All_Devices")
-                        .child(deviceId.trim()).child("dimmerValue");
-                speedRef.setValue(progress);
-            }
-        });
-
-
-
-
-
-        ////////////////////////////////////////////////////////
-
-
 
     }
 
